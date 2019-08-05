@@ -48,7 +48,7 @@ jobs:
             sfdx force:auth:jwt:grant --clientid 3MVG973QtA4.tpvmGIsm1S6VuSeY5Bi81942aXs8m9RsRutzYlSQcRFBIomfH1txr7WlR4xQz1BdlP2.3Lb6g --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod.dev --instanceurl https://test.salesforce.com -a sandbox
 
             sfdx force:auth:jwt:grant --clientid 3MVG9vtcvGoeH2biPB.r7xCufPr6F7fKVm2Qim.AAxQghM_M7t5uodK6iwvdFgzF0UkpYEcyEUaqUk2CMJaxZ --jwtkeyfile assets/server.key --username test-x8ocknsc81ty@example.com --instanceurl https://test.salesforce.com -a my-scratch-org
-            sfdx force:source:pull -u my-scratch-org
+            # sfdx force:source:pull -u my-scratch-org
 
             export SCRATCH_DIFF="$(eval sfdx force:source:pull -u my-scratch-org)"
             echo "$SCRATCH_DIFF" > SCRATCH_DIFF.TXT
