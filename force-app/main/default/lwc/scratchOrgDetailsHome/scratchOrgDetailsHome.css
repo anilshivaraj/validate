@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  border-bottom: solid 1px #f3f2f2;
+  font-size: 14px;
+}
+
+.row div:first-child {
+  width: 240px;
+}
+
+.row div:nth-child(2) {
+  flex: 1;
+}

@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Scratch Org Data(sorting needs to be fixed)" icon-name="standard:reward">
+        <!-- <ul class="slds-m-around_medium"> -->
+        <!-- <template iterator:it={record}>
+                <li key={it.value.name}>
+                    <div if:true={it.first} class="list-first"></div>
+                    {it.value.name}, {it.value.count}
+                    <div if:true={it.last} class="list-last"></div>
+                </li>
+            </template> -->
+        <div class="slds-m-around_large">
+            <table style="width:100%">
+                <tr>
+                    <th>Object</th>
+                    <th class="slds-text-align_center">Count</th>
+                </tr>
+                <template iterator:it={record}>
+                    <tr key={it.value.name}>
+                        <td>{it.value.name}</td>
+                        <td class="slds-text-align_center">{it.value.count}</td>
+                    </tr>
+                </template>
+
+            </table>
+        </div>
+        <!-- </ul> -->
+    </lightning-card>
+</template>

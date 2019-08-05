@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "c/orgStorageCountHome": [
+                "orgStorageCountHome/orgStorageCountHome.js"
+            ],
+            "c/scratchOrgDetailsHome": [
+                "scratchOrgDetailsHome/scratchOrgDetailsHome.js"
+            ]
+        },
+        "experimentalDecorators": true
+    },
+    "include": [
+        "**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jest"
+        ]
+    }
+}

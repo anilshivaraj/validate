@@ -1,0 +1,64 @@
+<template>
+    <lightning-card title="Scratch Org Details" icon-name="standard:reward">
+        <lightning-layout>
+
+            <lightning-layout-item>
+                <div class="slds-m-left_small">
+                    <div class="row slds-m-around_small">
+                        <div>Login url</div>
+                        <div>
+                            {instanceurl}
+                        </div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Username</div>
+                        <div>{username}</div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Password</div>
+                        <div>{password}</div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Expiration Date</div>
+                        <div>
+                            <lightning-formatted-date-time value={expirationdate} year="2-digit" month="short"
+                                day="2-digit" weekday="long"></lightning-formatted-date-time>
+                        </div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Org Alias(For SFDX)</div>
+                        <div>{alias}</div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Edition</div>
+                        <div>{edition}</div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Req ID</div>
+                        <div>
+                            <lightning-formatted-url
+                                value="https://deloittecli.lightning.force.com/lightning/r/Request_Scratch_Org__c/a053i0000018L7TAAU/view"
+                                tooltip="Go to Req-0001" label="Req-0001" target="_blank"></lightning-formatted-url>
+                        </div>
+                    </div>
+                    <div class="row slds-m-around_small">
+                        <div>Scratch Org Created Date</div>
+                        <div>
+                            <lightning-formatted-date-time value={createddate} year="numeric" month="numeric"
+                                day="numeric" hour="2-digit" minute="2-digit" time-zone-name="short" hour12="true">
+                            </lightning-formatted-date-time>
+                        </div>
+                    </div>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item alignment-bump="left">
+                <lightning-button-icon size="large" class="slds-m-right_large" onclick={handlerefresh}
+                    icon-name="utility:copy" alternative-text="copy credentials">
+                </lightning-button-icon>
+            </lightning-layout-item>
+        </lightning-layout>
+
+
+    </lightning-card>
+</template>
