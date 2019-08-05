@@ -1,0 +1,77 @@
+version: 2
+
+general:
+# Uncomment the following to specify only a specific branch
+#   branches:
+#     only:
+#       - dev # specific branch
+#       - /dev-.*/ # or regexes
+
+jobs:
+  build:
+    machine: true
+    working_directory: ~/ci_app
+    environment:
+      # from https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli_standalone.htm
+      # and https://developer.salesforce.com/media/salesforce-cli/manifest.json
+      - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+    steps:
+      - checkout
+      - run:
+          name: Download CLI
+          command: |
+            echo $PARAM1
+            mkdir sfdx
+            wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
+      - run:
+          name: Install CLI
+          command: |
+            ./sfdx/install
+            sfdx
+            mkdir tmp
+
+      - run:
+          name: Create hub key
+          command: |
+            echo 'make hub key'
+            #- mkdir keys
+            #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> keys/hub.key
+            openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+            #- openssl rsa -in keys/hub.key -check -noout
+
+      - run:
+          name: Auth Hub and Scratch Orgs
+          command: |
+            echo 'Running tests'
+            sfdx force:auth:jwt:grant --clientid 3MVG9vtcvGoeH2biPB.r7xCufPr6F7fKVm2Qim.AAxQghM_M7t5uodK6iwvdFgzF0UkpYEcyEUaqUk2CMJaxZ --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod --instanceurl https://login.salesforce.com --setdefaultdevhubusername -a HubOrg
+            sfdx force:auth:jwt:grant --clientid 3MVG9uudbyLbNPZOKYnQ9DAeeueqo.Oe3fjIhAtXoZmu0X1hSsFYDzg.io4Z__Zwx224PzG6hKm5Fc7I.b0Mi --jwtkeyfile assets/server.key --username anil.shivaraj@gmail.com.personal --instanceurl https://login.salesforce.com -a secondaryHubOrg
+            sfdx force:auth:jwt:grant --clientid 3MVG973QtA4.tpvmGIsm1S6VuSeY5Bi81942aXs8m9RsRutzYlSQcRFBIomfH1txr7WlR4xQz1BdlP2.3Lb6g --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod.dev --instanceurl https://test.salesforce.com -a sandbox
+            sfdx force:data:record:update -s Request_Scratch_Org__c -i a053i0000018L7TAAU -v "Status__c='Processing'" -u HubOrg
+
+      - run:
+          name: Create Scratch Org and Deploy code
+          command: |
+            sfdx force:org:list --all
+            sfdx force:org:create --targetdevhubusername HubOrg --setdefaultusername -s -f ~/ci_app/config/project-scratch-def.json --wait 20 --durationdays 1 --setalias newscratch
+            sfdx force:user:password:generate --targetusername newscratch
+            sfdx force:source:push -u newscratch
+            sfdx force:org:display -u newscratch
+
+            sfdx force:data:tree:import -p ~/ci_app/data/export-demo-Account-Contact-Case-Opportunity-plan.json -u newscratch
+            sfdx force:data:tree:import -p ~/ci_app/data/export-demo-Lead-plan.json -u newscratch
+
+            export SCRATCH_DETAILS="$(eval sfdx force:org:display -u newscratch)"
+            echo "$SCRATCH_DETAILS" > SCRATCH_DETAILS.TXT
+            echo $SCRATCH_DETAILS
+
+            export SCRATCH_LIMITS="$(eval sfdx force:limits:api:display -u newscratch)"
+            echo "$SCRATCH_LIMITS" > SCRATCH_LIMITS.TXT
+            echo $SCRATCH_LIMITS
+
+            sfdx force:data:record:update -s Request_Scratch_Org__c -i a053i0000018L7TAAU -v "Scratch_Org_Details__c='$SCRATCH_DETAILS' Status__c='Completed'" -u HubOrg
+            sfdx force:data:record:create -s Scratch_Org_Creds__c -v "Name='ScratchOrgDetails' Sandbox_Limits__c='$SCRATCH_LIMITS' Org_Details__c='$SCRATCH_DETAILS'" -u newscratch
+
+            sfdx force:source:convert -r force-app -d testDeploy 
+            sfdx force:mdapi:deploy -d testDeploy/ -u sandbox -w 20
+
+            sfdx force:apex:execute -f assets/loadorgdata.apex -u newscratch
