@@ -9,8 +9,13 @@ jobs:
 
       - run:
           name: Greeting
-          command: echo Hello, world $PARAM1 . $PARAM1 == 'NoTi-5;E-Bikes;Pure-Aloe' 
-                  if [[ "${PARAM1}" == "NoTi-5;E-Bikes;Pure-Aloe" ]] ; then echo Hellllllll
+          #- echo Hello, world $PARAM1 . $PARAM1 == 'NoTi-5;E-Bikes;Pure-Aloe'
+          command: | # Test multiline yaml support
+            if [[ "$PARAM1" == "5" ]]; then
+              echo PARAM1 is 5
+            else
+              echo PARAM1 is not 5
+            fi
 
       - run:
           name: Print the Current Time
