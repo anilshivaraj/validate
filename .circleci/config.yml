@@ -11,10 +11,10 @@ jobs:
           name: Greeting
           #- echo Hello, world $PARAM1 . $PARAM1 == 'NoTi-5;E-Bikes;Pure-Aloe'
           command: | # Test multiline yaml support
-            if [[ "$PARAM1" == "5" ]]; then
-              echo PARAM1 is 5
+            if [[ "$PARAM1" == "NoTi-5;E-Bikes;Pure-Aloe" ]]; then
+              echo PARAM1 is Correct and is NoTi-5;E-Bikes;Pure-Aloe
             else
-              echo PARAM1 is not 5
+              echo PARAM1 is not NoTi-5;E-Bikes;Pure-Aloe
             fi
 
       - run:
