@@ -1,58 +1,16 @@
 version: 2
-
-general:
-# Uncomment the following to specify only a specific branch
-#   branches:
-#     only:
-#       - dev # specific branch
-#       - /dev-.*/ # or regexes
-
 jobs:
   build:
-    machine: true
-    working_directory: ~/ci_app
-    environment:
-      # from https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli_standalone.htm
-      # and https://developer.salesforce.com/media/salesforce-cli/manifest.json
-      - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+    docker:
+      - image: debian:stretch
+
     steps:
       - checkout
-      - run:
-          name: Download CLI
-          command: |
-            echo $PARAM1
-            mkdir sfdx
-            wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
-      - run:
-          name: Install CLI
-          command: |
-            ./sfdx/install
-            sfdx
-            mkdir tmp
 
       - run:
-          name: Create hub key
-          command: |
-            echo 'make hub key'
-            #- mkdir keys
-            #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> keys/hub.key
-            # openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
-            #- openssl rsa -in keys/hub.key -check -noout
+          name: Greeting
+          command: echo Hello, world.
 
       - run:
-          name: Auth Hub and Scratch Orgs
-          command: |
-            echo 'Running tests'
-            sfdx force:auth:jwt:grant --clientid 3MVG9vtcvGoeH2biPB.r7xCufPr6F7fKVm2Qim.AAxQghM_M7t5uodK6iwvdFgzF0UkpYEcyEUaqUk2CMJaxZ --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod --instanceurl https://login.salesforce.com --setdefaultdevhubusername -a HubOrg
-            sfdx force:auth:jwt:grant --clientid 3MVG9uudbyLbNPZOKYnQ9DAeeueqo.Oe3fjIhAtXoZmu0X1hSsFYDzg.io4Z__Zwx224PzG6hKm5Fc7I.b0Mi --jwtkeyfile assets/server.key --username anil.shivaraj@gmail.com.personal --instanceurl https://login.salesforce.com -a secondaryHubOrg
-            sfdx force:auth:jwt:grant --clientid 3MVG973QtA4.tpvmGIsm1S6VuSeY5Bi81942aXs8m9RsRutzYlSQcRFBIomfH1txr7WlR4xQz1BdlP2.3Lb6g --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod.dev --instanceurl https://test.salesforce.com -a sandbox
-
-            sfdx force:auth:jwt:grant --clientid 3MVG9vtcvGoeH2biPB.r7xCufPr6F7fKVm2Qim.AAxQghM_M7t5uodK6iwvdFgzF0UkpYEcyEUaqUk2CMJaxZ --jwtkeyfile assets/server.key --username test-x8ocknsc81ty@example.com --instanceurl https://test.salesforce.com -a my-scratch-org
-            # sfdx force:source:pull -u my-scratch-org
-
-            export SCRATCH_DIFF="$(eval sfdx force:source:pull -u my-scratch-org)"
-            echo "$SCRATCH_DIFF" > SCRATCH_DIFF.TXT
-            echo $SCRATCH_DIFF
-
-
-            sfdx force:data:record:update -s Request_Scratch_Org__c -i a053i0000018L7TAAU -v "Components_Changed__c='$SCRATCH_DIFF'" -u HubOrg
+          name: Print the Current Time
+          command: date
