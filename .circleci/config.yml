@@ -9,7 +9,8 @@ jobs:
 
       - run:
           name: Greeting
-          command: echo Hello, world $PARAM1 . $PARAM1 == 'NoTi-5;E-Bikes;Pure-Aloe' "'${{PARAM1}}' == 'NoTi-5;E-Bikes;Pure-Aloe'"
+          command: echo Hello, world $PARAM1 . $PARAM1 == 'NoTi-5;E-Bikes;Pure-Aloe' 
+                  if [[ "${PARAM1}" == "NoTi-5;E-Bikes;Pure-Aloe" ]] ; then echo Hellllllll
 
       - run:
           name: Print the Current Time
