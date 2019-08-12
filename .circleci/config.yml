@@ -3,7 +3,7 @@ jobs:
   build:
     machine: true
     working_directory: ~/ci_app
-    
+
     steps:
       - checkout
 
@@ -16,6 +16,7 @@ jobs:
             else
               echo PARAM1 is not "NoTi-5;E-Bikes;Pure-Aloe"
             fi
+            sfdx force:auth:jwt:grant --clientid 3MVG9vtcvGoeH2biPB.r7xCufPr6F7fKVm2Qim.AAxQghM_M7t5uodK6iwvdFgzF0UkpYEcyEUaqUk2CMJaxZ --jwtkeyfile assets/server.key --username ashivaraj@deloitte.com.qrscprod --instanceurl https://login.salesforce.com --setdefaultdevhubusername -a HubOrg
 
       - run:
           name: Print the Current Time
